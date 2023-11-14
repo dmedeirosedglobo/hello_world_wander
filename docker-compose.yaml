@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+   api:
+     build:
+       context: ./api
+     ports:
+      - "3001:3001"
+     networks:
+      - net-backend
+      - net-frontend
+     depends_on:
+      - mongo
+
+   frontend:
+     build:
+       context: ./frontend
+     ports:
+      - "3000:3000"
+     networks:
+      - net-frontend
+        #     command: sh -c "while ! nc -z api 3000; do sleep 1; done"
+     depends_on:
+      - api
+
+   mongo:
+    image: mongo:latest
+    volumes:
+      - data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - net-backend
+
+networks:
+  net-frontend:
+  net-backend:
+
+volumes:
+  data:
